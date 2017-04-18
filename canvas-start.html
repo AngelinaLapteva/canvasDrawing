@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML5 Canvas</title>
+</head>
+<body>
+  <form action="" class="settings">
+
+    <label for="color">Color</label>
+    <input type="color" name="color" value="#BADA55">
+    <label for="width">Line Width:</label>
+    <input type="range" name="width" min="1" max="100" value="10">
+
+    <a class="download" href="#">Download</a>
+
+  </form>
+
+  <canvas class="draw" width="1000" height="1000"></canvas>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      background:#1D425D;
+      text-align: center;
+    }
+
+    .draw {
+      margin:50px auto;
+      border:2px solid white;
+    }
+
+    .draw:active {
+      cursor:crosshair;
+    }
+  </style>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+  <script>
+    // lets go
+    //grabbing the actual element and not a whole array together with this object
+    var canvas = $('.draw')[0];
+    // in order to draw on canvas flat one 2d
+    var ctx=canvas.getContext('2d');
+    //create built in properties of getContext
+    ctx.strokeStyle='#BADA55';
+    ctx.fillStyle='#BADA55';
+    ctx.lineWidth=1;
+    ctx.lineCap='round';
+    ctx.lineJoin='round';
+    // make a global variable to hold the reference to our last reference
+    var lastEvent;
+    //
+    var mouseDown=false;
+    var h=0;
+
+
+    //ctx.fillRect(20,50,200,200);
+// e now getting properties of mousemove event
+    $('.draw').on('mousemove', function(e){
+      
+if(!mouseDown) { //returns nothing ans stops the funstion(e)
+  return; // skip this function from running if the are not currently moused down
+  // example: if mouseDown would be true, then it will return mouseDown false and if initially it stores false, then this function will return true
+}
+
+      // first check if they even have the lastEvent for reference and if there is no last event = if(!lastEvent)
+      // empty string is falsy  and 0 and null and undefined
+      if(!lastEvent){
+        lastEvent=e;
+        return; 
+      }
+      var x = e.offsetX;
+      var y = e.offsetY;
+      console.log(x, y);
+      ctx.strokeStyle=`hsl(${h}, 100%, 50%)`;
+    // increment our hue by 1
+      h++;
+
+// random sizes
+ctx.lineWidth++
+      // start the path
+      ctx.beginPath();
+      // move our context over to the starting x and y
+      ctx.moveTo(lastEvent.offsetX,lastEvent.offsetY);
+      //draw a line to our cursors x and y
+      ctx.lineTo(x,y);
+      //stroke that line
+      ctx.stroke();
+      //end our drawing
+      ctx.closePath();
+      lastEvent=e;
+    });
+    $('.draw').on('mouseout',function(){
+      // when we go beyond the canvas 
+      lastEvent=undefined;
+      mouseDown = flase;
+    });
+    $('.draw').on('mousedown',function(){
+      mouseDown=true;
+    });
+     $('.draw').on('mouseup',function(){
+      mouseDown=false;
+      lastEvent=undefined; // remove the ref to the last event because we are done
+    });
+
+     $('[name="width"]').on('change', function(){
+      ctx.lineWidth=this.value;
+     });
+     $('[name="color"]').on('change', function(){
+      ctx.strokeStyle=this.value;
+     })
+
+  </script>
+
+</body>
+</html>
